@@ -1,5 +1,7 @@
 package task_Server_development.server;
 
+
+
 import java.io.*;
 import java.net.*;
 import java.nio.Buffer;
@@ -28,6 +30,13 @@ public class ServerMain {
 
             while (true) {
 
+//                ServerRunner serverRunner = new ServerRunner(socket, userName);
+//                serverRunner.run();
+//
+// ------------------------------------------------------   Уходит в ServerRunner   -----------------------------------
+
+
+
                 try {
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
@@ -54,7 +63,7 @@ public class ServerMain {
             Objects.requireNonNull(serverSocket).close();
 
         }
-
+//------------------------------------------------------   Уходит в ServerRunner   -----------------------------------
     }
 
 }
