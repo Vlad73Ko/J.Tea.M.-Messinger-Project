@@ -16,8 +16,6 @@ public class ClientMain {
         Scanner userNameScanner = new Scanner(System.in);
         System.out.println("Hi, please enter your name.");
         String userName = userNameScanner.nextLine();
-        System.out.println("password:");
-        String userPassword = userNameScanner.nextLine();
 
         Socket socket = null;
         Scanner messageScanner = new Scanner(System.in);
@@ -43,7 +41,6 @@ public class ClientMain {
                     outputStream.flush();
 
                     byte[] data = new byte[32 * 1024];
-                 //   int readyBytes = inputStream.read(data);
 
                     String response = new String(data, 0, inputStream.read(data));
                     if (response.equals("close")) {

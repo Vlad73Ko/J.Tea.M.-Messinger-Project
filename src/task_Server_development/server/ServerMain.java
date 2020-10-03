@@ -14,7 +14,7 @@ public class ServerMain {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(4999);
-            //System.out.println("Started, waiting for connection");
+
             Socket socket = serverSocket.accept();
             System.out.println("Accepted " + socket.getInetAddress());
 
@@ -32,7 +32,6 @@ public class ServerMain {
                     InputStream inputStream = socket.getInputStream();
                     OutputStream outputStream = socket.getOutputStream();
 
-                  //  int readyBytes = inputStream.read(buf);
                     String line = new String(buf, 0, inputStream.read(buf));
 
                     System.out.println(userName + " > " + line);
