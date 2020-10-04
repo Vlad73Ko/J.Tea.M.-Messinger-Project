@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerRunner extends Thread {
     private final Socket clientSocket;
@@ -33,13 +35,18 @@ public class ServerRunner extends Thread {
                 } else if ("login".equalsIgnoreCase(cmd)) {
                     handleLogin(outputStream, tokens);
                     /*
-                    * Тут будет сам мессенджер.
-                    * Может выглядеть так:
-                    * if (handleLogin(outputStream, tokens) {
-                    * messenger.start
-                    * }
-                    *
-                    * */
+                     * Тут будет сам мессенджер.
+                     * Может выглядеть так:
+                     * if (handleLogin(outputStream, tokens) {
+                     * messenger.start
+                     * }
+                     *
+                     * */
+/*                    List users = new ArrayList();
+                    for (User us : users) {
+                        String msg = user.getLoginName  + ": " + line + "\n";
+                        outputStream.write(msg.getBytes());
+                    }*/
                 } else {
                     String msg = "unknown " + cmd + "\n";
                     outputStream.write(msg.getBytes());
