@@ -5,6 +5,8 @@ import jdk.jshell.execution.Util;
 import java.io.*;
 import java.net.*;
 import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -13,9 +15,14 @@ public class ClientMain {
 
     public static void main(String[] args) throws IOException {
 
+
+
         Scanner userNameScanner = new Scanner(System.in);
         System.out.println("Hi, please enter your name.");
         String userName = userNameScanner.nextLine();
+
+
+
 
         Socket socket = null;
         Scanner messageScanner = new Scanner(System.in);
