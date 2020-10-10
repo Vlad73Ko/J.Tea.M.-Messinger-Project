@@ -5,9 +5,18 @@ import java.util.List;
 
 public class ServerRunner extends Thread {
     private final Socket clientSocket;
+    private final Peer peer;
     private String login = null;
+    OutputStream outputStream;
 
-    public ServerRunner(Socket clientSocket) {
+    User user1 = new User("user", "user");
+    User user2 = new User("guest", "guest");
+
+    List<User> userList = new ArrayList();
+
+
+    public ServerRunner(Peer peer, Socket clientSocket) {
+        this.peer = peer;
         this.clientSocket = clientSocket;
     }
 
@@ -20,9 +29,13 @@ public class ServerRunner extends Thread {
         }
     }
 
+    public String getLogin() {
+        return login;
+    }
+
     private void handleClientSocket() throws IOException {
         InputStream inputStream = clientSocket.getInputStream();
-        OutputStream outputStream = clientSocket.getOutputStream();
+        this.outputStream = clientSocket.getOutputStream();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
@@ -34,27 +47,30 @@ public class ServerRunner extends Thread {
                     break;
                 } else if ("login".equalsIgnoreCase(cmd)) {
                     handleLogin(outputStream, tokens);
-                    /*
-                     * Тут будет сам мессенджер.
-                     * Может выглядеть так:
-                     * if (handleLogin(outputStream, tokens) {
-                     * messenger.start
-                     * }
-                     *
-                     * */
-/*                    List users = new ArrayList();
-                    for (User us : users) {
-                        String msg = user.getLoginName  + ": " + line + "\n";
-                        outputStream.write(msg.getBytes());
-                    }*/
-                } else {
-                    String msg = "unknown " + cmd + "\n";
-                    outputStream.write(msg.getBytes());
+                } else if ("send".equalsIgnoreCase(cmd)) {
+                    messenger(tokens);
+                }
+
                 }
             }
-
-        }
         clientSocket.close();
+    }
+
+    private void messenger(String[] tokens) throws IOException {
+        List<ServerRunner> serverRunners = peer.getServerRunners();
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < tokens.length; i++) {
+            sb.append(tokens[i]);
+        }
+        String outputMessage = sb.toString();
+        tokens[0] = "";
+        String str = String.join(" ", tokens);
+
+        for (ServerRunner runner : serverRunners) {
+            String msg = login + " says " + " " + str + "\n";
+            runner.broadcast(msg);
+        }
     }
 
     private boolean handleLogin(OutputStream outputStream, String[] tokens) throws IOException {
@@ -62,17 +78,55 @@ public class ServerRunner extends Thread {
             String login = tokens[1];
             String password = tokens[2];
 
-            if (login.equals("user") && password.equals("user")) {
-                String msg = "ok login";
+            if (login.equals(user1.getName()) && password.equals(user1.getPassword())) {
+                String msg = "ok login\n";
                 outputStream.write(msg.getBytes());
                 this.login = login;
                 System.out.println("User logged in: " + login);
+                userList.add(user1);
+                user1.setOnline(true);
+
+                List<ServerRunner> serverRunners = peer.getServerRunners();
+
+                for (ServerRunner runner: serverRunners) {
+                    String currentConnection = "online " + runner.getLogin() + "\n";
+                    broadcast(currentConnection);
+                }
+                String onlineStatus = "online " + login + "\n";
+                for (ServerRunner runner: serverRunners) {
+                    runner.broadcast(onlineStatus);
+                }
+
+                return true;
+            } else if (login.equals(user2.getName()) && password.equals(user2.getPassword())) {
+                String msg = "ok login\n";
+                outputStream.write(msg.getBytes());
+                this.login = login;
+                System.out.println("User logged in: " + login + "\n");
+                userList.add(user2);
+                user2.setOnline(true);
+
+
+                List<ServerRunner> serverRunners = peer.getServerRunners();
+
+                for (ServerRunner runner: serverRunners) {
+                    String currentConnection = "online " + runner.getLogin() + "\n";
+                    broadcast(currentConnection);
+                }
+                String onlineStatus = "online " + login + "\n";
+                for (ServerRunner runner: serverRunners) {
+                    runner.broadcast(onlineStatus);
+                }
                 return true;
             } else {
-                String msg = "Login error";
+                String msg = "Login error\n";
                 outputStream.write(msg.getBytes());
             }
         }
         return false;
+    }
+
+    private void broadcast(String onlineStatus) throws IOException {
+        outputStream.write(onlineStatus.getBytes());
     }
 }
