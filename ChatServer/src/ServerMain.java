@@ -1,11 +1,8 @@
-import java.io.*;
-import java.net.*;
-
 public class ServerMain {
 
     public static void main(String[] args) {
         int port = 8818;
-        Peers peer = new Peers(port);
+        Peer peer = new Peer(port);
         peer.start();
     }
 }

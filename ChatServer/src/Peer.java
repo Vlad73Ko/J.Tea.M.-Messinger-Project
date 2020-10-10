@@ -4,22 +4,27 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Peers extends Thread{
-    private final int serverPort;
+public class Peer extends Thread{
+    private final int port;
     private List<ServerRunner> serverRunners= new ArrayList<>();
 
-    public Peers(int serverPort) {
-        this.serverPort = serverPort;
+    public Peer(int port) {
+        this.port = port;
     }
+
+    public List<ServerRunner> getServerRunners() {
+        return serverRunners;
+    }
+
 
     @Override
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(serverPort);
+            ServerSocket serverSocket = new ServerSocket(port);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("Accepted connection from " + clientSocket);
-                ServerRunner runner = new ServerRunner(clientSocket);
+                ServerRunner runner = new ServerRunner(this, clientSocket);
                 serverRunners.add(runner);
                 runner.start();
             }
