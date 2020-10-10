@@ -10,8 +10,10 @@ public class Client {
     private static Socket clientSocket; //сокет для соединения
     private static BufferedReader consoleReader; // буфер для чтения из консоли
 
-    private static InputStream in; // поток чтения из сокета
-    private static OutputStream out; // поток записи в сокет
+    //private static InputStream in; // поток чтения из сокета
+    private static BufferedReader in; // поток чтения из сокета
+    //private static OutputStream out; // поток записи в сокет
+    private static BufferedWriter out; // поток записи в сокет
 
     public static void main(String[] args) {
 
@@ -23,24 +25,40 @@ public class Client {
         try {
             consoleReader = new BufferedReader(new InputStreamReader(System.in));
             clientSocket = new Socket(HOST, PORT);
-            out = clientSocket.getOutputStream();
-            in = clientSocket.getInputStream();
+            out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
             String userName = consoleReader.readLine();
-            out.write(userName.getBytes());
+            out.write(userName + "\n");
             out.flush();
 
-            System.out.println("Connection is ready >>>");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        String serverAnswer;
+        try {
+            System.out.println("waiting for server' answer...");
+            serverAnswer = in.readLine();
+            if (serverAnswer.equalsIgnoreCase("ok login")) System.out.println("Connection is ready >>>");
+            else
+                if (serverAnswer.equalsIgnoreCase("Login error")) System.out.println("Connection is not ready >>>");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
         //Chatting
         String msg = "";
         try {
-            while (!msg.equalsIgnoreCase("close")) {
+            // while (!clientSocket.isClosed())
+            while (!msg.equalsIgnoreCase("quit")) {
                 System.out.print(">>>> ");
                 msg = consoleReader.readLine();
-                out.write(msg.getBytes());
+                out.write(msg + "\n");
                 out.flush();
             }
         } catch (IOException e) {
