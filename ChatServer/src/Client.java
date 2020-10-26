@@ -5,7 +5,7 @@ import java.net.Socket;
 
 public class Client {
 
-    private static final int PORT = 8818;
+    private static final int PORT = 4999;
     private static final String HOST = "localhost";
     private static Socket clientSocket; //сокет для соединения
     private static BufferedReader consoleReader; // буфер для чтения из консоли
@@ -16,7 +16,8 @@ public class Client {
     private boolean login () throws IOException {
         System.out.println("Enter username and password separated by a space: ");
         String login = consoleReader.readLine();
-        out.write("login " + login + "\n");
+        //out.write("login " + login + "\n");
+        out.write(login + "\n");
         out.flush();
         System.out.println("...waiting for server' answer...");
         String serverAnswer = in.readLine();
