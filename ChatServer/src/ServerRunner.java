@@ -44,6 +44,7 @@ public class ServerRunner extends Thread {
             if (tokens != null && tokens.length > 0) {
                 String cmd = tokens[0];
                 if ("quit".equalsIgnoreCase(cmd)) {
+                    logOff();
                     break;
                 } else if ("login".equalsIgnoreCase(cmd)) {
                     handleLogin(outputStream, tokens);
@@ -54,6 +55,10 @@ public class ServerRunner extends Thread {
                 }
             }
         clientSocket.close();
+    }
+
+    private void logOff() {
+        peer.removeClient(this);
     }
 
     private void messenger(String[] tokens) throws IOException {

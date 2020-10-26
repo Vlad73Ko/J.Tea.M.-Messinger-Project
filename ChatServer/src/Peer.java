@@ -32,4 +32,8 @@ public class Peer extends Thread{
             e.printStackTrace();
         }
     }
+
+    public void removeClient(ServerRunner serverRunner) {
+        serverRunners.remove(serverRunner);
+    }
 }
